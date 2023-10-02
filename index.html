@@ -12,7 +12,7 @@
 <body>
 
     <div id="app">
-        Gracz:{{activeplayer}} Mana:{{activeplayerobject.mana}}
+        Gracz:{{activeplayer}} <span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}</span>
         <div id="board">
             <div class="field" v-for="(elem,index) in fields" @click="handleField(elem)" :class="getDynamicClass2(elem)"
                 :id="'field'+elem.x+''+elem.y" :key="index">
@@ -143,7 +143,9 @@
                     this.setGreens();
 
                     if(this.activeplayer){
-                        this.players.find((el) => el.id == self.activeplayer).mana += 1;
+                        if(this.players.find((el) => el.id == self.activeplayer)){
+                            this.players.find((el) => el.id == self.activeplayer).mana += 1;
+                        }
                     }
 
                 },
