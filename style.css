@@ -51,6 +51,6 @@
        cursor: url('bolt.png'), auto;
    }
 
-   .action:hover {
+   .bolticon:hover {
     opacity:0.4
    }

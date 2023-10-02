@@ -26,7 +26,7 @@
             <div style="clear:both"></div>
 
             <p>Czary:</p>
-            <button @click="boltbool = true">Piorun (5)</button>
+            <button @click="boltbool = true" alt="zadaje 5 dimejdża">Piorun (5)</button>
 
             <p v-for="elem in messages">{{elem}}</p>   
         </div>
@@ -59,8 +59,8 @@
                 messages:[],
                 boltbool:false,
                 players: [
-                    { id: 1, mana: 0 },
-                    { id: 2, mana: 0 },
+                    { id: 1, mana: 9 },
+                    { id: 2, mana: 9 },
                 ],
                 gold: [100, 100],
                 activefieldbool: false,
@@ -253,11 +253,11 @@
                     let ap = this.players.find((el) => el.id == self.activeplayer);
 
                     if(this.boltbool){
-                        if(ap.mana < 5){
+                        if(ap.mana <= 5){
                            
                             self.messages.push('za mało many');
                         }
-                        if(elem.type && ap.mana > 5){
+                        if(elem.type && ap.mana >= 5){
                             ap.mana -=5;
                             elem.life -=5;
                             if(elem.life <= 0){
