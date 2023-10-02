@@ -1,0 +1,48 @@
+   .field {
+       border: 1px black solid;
+       width: 50px;
+       height: 50px;
+       float: left;
+       transition: .3s;
+   }
+
+   #board {
+       width: 550px;
+   }
+
+   .red {
+       background: red !important;
+   }
+
+   .yellow {
+       /* background: rgba(255,255,0,0.8); */
+       border: 1px yellow solid !important;
+   }
+
+   .green {
+       background: green;
+       opacity: 0.6;
+   }
+
+   .blue {
+       background: blue;
+   }
+
+   .attacked {
+       opacity: 0.6;
+   }
+
+   .moved {
+       opacity: 0.8;
+   }
+
+   .life {
+       color: green;
+       background: white
+   }
+
+   .attack {
+       color: red;
+       background: white;
+       margin-left: 5px
+   }

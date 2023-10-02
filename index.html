@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="app">
+        Gracz:{{activeplayer}} {{activeplayerobject}}
+        <div id="board">
+            <div class="field" v-for="(elem,index) in fields" @click="handleField(elem)" :class="getDynamicClass2(elem)"
+                :id="'field'+elem.x+''+elem.y" :key="index">
+                <span v-if="elem.life" class="life">{{elem.life}}</span><span v-if="elem.life"
+                    class="attack">{{elem.attack}}</span>
+
+                <span v-if="elem.player == 1"></span>
+                <span v-if="elem.player == 2"></span>
+
+            </div>
+            <div style="clear:both"></div>
+        </div>
+
+     
+        <br>
+        <!-- <button @click="next">Koniec tury</button> -->
+    </div>
+
+
+    <script src="maxprop.js"></script>
+    <script src="vue.js"></script>
+
+    <script>
+
+        function copyProperties(source, target, excludedProperties) {
+            for (const prop in source) {
+                if (!excludedProperties.includes(prop)) {
+                    target[prop] = source[prop];
+                }
+            }
+        }
+
+
+
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                players: [
+                    { id: 1, mana: 0 },
+                    { id: 2, mana: 0 },
+                ],
+                gold: [100, 100],
+                activefieldbool: false,
+                activefield: {},
+                enemytypes: [
+                    {
+                        type: 'enemy',
+                        code: 'skeleton',
+                        color: 'red',
+                        attack: 2,
+                        life: 10,
+                        speed: 4,
+                        active: false
+                    },
+                    {
+                        type: 'enemy',
+                        code: 'mage',
+                        color: 'blue',
+                        attack: 6,
+                        life: 5,
+                        speed: 2,
+                        active: false
+
+                    }
+                ],
+                fields: []
+
+            },
+            mounted() {
+                for (let i = 0; i < 10; i++) {
+                    for (let j = 0; j < 10; j++) {
+                        this.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null })
+                    }
+                }
+
+                this.placeEnemy(0 , 0, 'mage', 1);
+                this.placeEnemy(0, 6, 'skeleton', 1);
+
+                this.placeEnemy(9, 0, 'mage', 2);
+                this.placeEnemy(9, 6, 'skeleton', 2);
+
+
+              
+
+
+                this.next();
+
+            },
+            computed: {
+                activeplayerobject(){
+                    let self = this;
+                    return this.players.find((el)=>el.id == self.activeplayer)
+
+                },
+                activeplayer() {
+                    if (this.fields.find((el) => el.active)) {
+                        return this.fields.find((el) => el.active).player
+                    }else{
+
+                    }
+                }
+            },
+            methods: {
+                next() {
+                    if (this.fields.find((el) => el.active == true)) {
+                        this.fields.find((el) => el.active == true).active = false;
+                    }
+                    let nextobj = maxProp(this.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
+                    if (!nextobj) {
+                        this.fields.forEach(el => {
+                            el.moved = false;
+                        });
+
+                        nextobj = maxProp(this.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
+
+                    }
+
+                    if(!nextobj){
+
+                    }
+
+                    let theobject = this.fields.find((el) => el.x == nextobj.x && el.y == nextobj.y).active = true;
+                    theobject.active = true;
+
+
+                    this.setGreens();
+
+                    if (!this.fields.find((el) => el.x == nextobj.x && el.y == nextobj.y)) {
+                        alert('TERAZ NIE ZNALAZŁ NASTĘPNEGO')
+                    }
+
+                },
+                setGreens() {
+                    let self = this;
+                    let activefieldobject = this.fields.find((el) => el.active == true);
+
+                    if (activefieldobject) {
+                        for (let i = 0; i < this.fields.length; i++) {
+                            let elem = this.fields[i];
+
+                            let roznica = Math.abs(activefieldobject.x - elem.x) + Math.abs(activefieldobject.y - elem.y);
+                            if (roznica <= activefieldobject.speed) {
+                                elem.green = true;
+                            } else {
+                                elem.green = false;
+                            }
+
+                        }
+
+                    }
+
+                },
+                placeEnemy(x, y, enemycode, player) {
+                    let objectfield = this.fields.find((el) => el.x == x && el.y == y);
+                    objectfield.player = player;
+                    let enemyobject = this.enemytypes.find(el => el.code == enemycode);
+
+                    for (let prop in enemyobject) {
+                        if (enemyobject.hasOwnProperty(prop)) {
+                            objectfield[prop] = enemyobject[prop];
+                        }
+                    }
+                },
+                move(x, y, x2, y2) {
+
+                    const objectfieldold = this.fields.find((el) => el.x == x && el.y == y);
+
+                    const objectfieldnew = this.fields.find((el) => el.x == x2 && el.y == y2);
+
+                    if (document.querySelector('#field' + x2 + y2).classList.contains('green')) {
+                        if (!objectfieldnew.type) {
+                            copyProperties(objectfieldold, objectfieldnew, ['x', 'y']);
+                            objectfieldnew.moved = true;
+
+                            this.clearobject(objectfieldold);
+                        }
+
+
+                        if (objectfieldnew.type == 'enemy') {
+                            if (objectfieldold.player != objectfieldnew.player) {
+                                if (Math.abs(x2 - x) <= 1 && Math.abs(y2 - y) <= 1) {
+
+                                    objectfieldold.moved = true;
+                                    objectfieldnew.life -= objectfieldold.attack;
+                                    objectfieldold.life -= Math.floor(objectfieldnew.attack);
+
+
+                                    if (objectfieldnew.life <= 0) {
+                                        this.clearobject(objectfieldnew);
+                                    }
+
+                                    if (objectfieldold.life <= 0) {
+                                        this.clearobject(objectfieldold);
+                                    }
+
+
+                                }
+                            }
+                        }
+
+                        objectfieldnew.active = false;
+                        this.next();
+                    }
+
+
+                  
+
+                },
+                clearobject(obj) {
+                    obj.color = '';
+                    obj.attack = 0;
+                    obj.life = 0;
+                    obj.code = '';
+                    obj.class = '';
+                    obj.attacked = null;
+                    obj.moved = null;
+                    obj.type = null;
+                    obj.active = false;
+                    obj.speed = false;
+                    obj.player = null;
+
+
+                },
+                handleField(elem) {
+                    let self = this;
+
+                    this.move(this.fields.find((el) => el.active).x, this.fields.find((el) => el.active).y, elem.x, elem.y);
+
+                },
+                getDynamicClass2(elem) {
+                    let self = this;
+                    let green = false;
+                    let yellow = false;
+                    let activefieldobject = this.fields.find((el) => el.active == true);
+
+                    if (activefieldobject) {
+                        let roznica = Math.abs(activefieldobject.x - elem.x) + Math.abs(activefieldobject.y - elem.y);
+                        if (roznica <= activefieldobject.speed) {
+                            green = true;
+                        } else {
+                            green = false;
+                        }
+                    }
+
+                    return {
+                        'yellow': elem.active,
+                        'blue': elem.player === 1,
+                        'red': elem.player === 2,
+                        // [elem.color]: elem.color,
+                        'green': elem.green,
+                        'attacked': elem.attacked
+                    };
+                },
+
+
+            }
+        })
+    </script>
+</body>
+
+</html>
