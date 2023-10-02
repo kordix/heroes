@@ -24,6 +24,11 @@
 
             </div>
             <div style="clear:both"></div>
+
+            <p>Czary:</p>
+            <button @click="boltbool = true">Piorun</button>
+
+            <p v-for="elem in messages">{{elem}}</p>   
         </div>
 
      
@@ -51,6 +56,8 @@
         let app = new Vue({
             el: '#app',
             data: {
+                messages:[],
+                boltbool:false,
                 players: [
                     { id: 1, mana: 0 },
                     { id: 2, mana: 0 },
@@ -89,8 +96,8 @@
                     }
                 }
 
-                this.placeEnemy(0 , 0, 'mage', 1);
-                this.placeEnemy(0, 6, 'skeleton', 1);
+                this.placeEnemy(1 , 1, 'mage', 1);
+                this.placeEnemy(1, 6, 'skeleton', 1);
 
                 this.placeEnemy(9, 0, 'mage', 2);
                 this.placeEnemy(9, 6, 'skeleton', 2);
@@ -117,6 +124,7 @@
                 }
             },
             methods: {
+
                 next() {
                     let self = this;
                     if (this.fields.find((el) => el.active == true)) {
@@ -242,6 +250,24 @@
                 },
                 handleField(elem) {
                     let self = this;
+                    let ap = this.players.find((el) => el.id == self.activeplayer);
+
+                    if(this.boltbool){
+                        if(ap.mana < 5){
+                           
+                            self.messages.push('za mało many');
+                        }
+                        if(elem.type && ap.mana > 5){
+                            ap.mana -=5;
+                            elem.life -=5;
+                            if(elem.life <= 0){
+                                this.clearobject(elem);
+                            }
+                        }
+                        this.boltbool = false;
+                        return
+                    }
+                    
 
                     if(this.fields.find((el) => el.active)){
                         this.move(this.fields.find((el) => el.active).x, this.fields.find((el) => el.active).y, elem.x, elem.y);
@@ -269,7 +295,8 @@
                         'red': elem.player === 2,
                         // [elem.color]: elem.color,
                         'green': elem.green,
-                        'attacked': elem.attacked
+                        'attacked': elem.attacked,
+                        'bolticon':this.boltbool
                     };
                 },
 

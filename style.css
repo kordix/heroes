@@ -46,3 +46,11 @@
        background: white;
        margin-left: 5px
    }
+
+   .bolticon {
+       cursor: url('bolt.png'), auto;
+   }
+
+   .action:hover {
+    opacity:0.4
+   }
