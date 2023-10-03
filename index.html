@@ -20,7 +20,7 @@
             <div id="board">
                 <div class="field" v-for="(elem,index) in fields" @click="handleField(elem)"
                     :class="getDynamicClass2(elem)" :id="'field'+elem.x+''+elem.y" :key="index">
-                    <span v-if="elem.life" class="life">{{elem.life}}</span><span v-if="elem.life"
+                    <span v-if="elem.life" class="life" >{{elem.life}}</span><span v-if="elem.life"
                         class="attack">{{elem.attack}}</span>
 
                     <span v-if="elem.player == 1"></span>
@@ -338,6 +338,8 @@
                     let yellow = false;
                     let activefieldobject = this.fields.find((el) => el.active == true);
 
+                    let dupa = 'skeleton';
+
                     if (activefieldobject) {
                         let roznica = Math.abs(activefieldobject.x - elem.x) + Math.abs(activefieldobject.y - elem.y);
                         if (roznica <= activefieldobject.speed) {
@@ -355,7 +357,11 @@
                         'green': elem.green,
                         'attacked': elem.attacked,
                         'bolticon': this.boltbool,
-                        'add': this.placebool && !elem.type
+                        'add': this.placebool && !elem.type,
+                        'skeleton' :elem.code == 'skeleton',
+                        'mage': elem.code == 'mage',
+
+                        rotate:elem.player == 2
                     };
                 },
 
