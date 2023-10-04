@@ -12,7 +12,27 @@
 <body>
 
     <div id="app">
-        Gracz:{{activeplayer }}<span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
+        <div v-if="!playerbool">
+                <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied" @click="setPlayer(elem)">Gracz {{elem.id}}</button>
+                <br><br>
+        </div>
+
+
+        <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
+        <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
+
+        <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
+
+        <p v-if="!gd.players[1].occupied">Oczekiwanie na gracza 2</p>
+
+
+        <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
+        <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
+
+
+
+
+        <span>Gracz:{{activeplayer }}</span><span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
             Gold:{{activeplayerobject.gold}}</span>
         <div style="display:flex">
 
@@ -85,6 +105,8 @@
         let app = new Vue({
             el: '#app',
             data: {
+                playerbool:false,
+                yourplayer:0,
                 gd: {
                     turns:0,
                     buycode: '',
@@ -92,8 +114,8 @@
                     messages: [],
                     boltbool: false,
                     players: [
-                        { id: 1, mana: 9, gold: 50 },
-                        { id: 2, mana: 9, gold: 50 },
+                        { id: 1, mana: 9, gold: 50 ,occupied:false},
+                        { id: 2, mana: 9, gold: 50 ,occupied:false},
                     ],
                     gold: [100, 100],
                     activefieldbool: false,
@@ -143,7 +165,7 @@
                 this.next();
 
                 conn.onmessage = function (e) {
-                    console.log('MESSAGE');
+                    console.log(e);
                     self.load();
                 };
 
@@ -163,6 +185,15 @@
                 }
             },
             methods: {
+                async setPlayer(elem){
+                    this.yourplayer = elem.id;
+                    this.playerbool = true;
+                    elem.occupied = true;
+                    await axios.post('api/save.php', this.gd);
+                    setTimeout(()=>{
+                        conn.send('load');
+                    })
+                },
                 async save() {
                     await axios.post('api/save.php', this.gd);
                 },
@@ -316,6 +347,14 @@
                 handleField(elem) {
                     let self = this;
                     let ap = this.gd.players.find((el) => el.id == self.activeplayer);
+
+                    console.log(this.gd.yourplayer);
+                    console.log(this.activeplayer);
+
+                    if(this.activeplayer != this.yourplayer){
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
 
 
                     if (this.gd.placebool && this.gd.buycode) {
