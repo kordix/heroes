@@ -71,34 +71,34 @@
    }
 
    .skeleton::before{
-    content: "";
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-    background:white url('skeleton.png');
-    background-repeat:no-repeat;
-    background-size: contain;
-    z-index:-2;
+        background:white url('images/skeleton.png');
+        background-repeat:no-repeat;
+        background-size: contain;
+        z-index:-2;
     /* transform: rotate(90deg); */
 
    }
 
-        .mage::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white url('mage.png');
-            background-repeat: no-repeat;
-            background-size: contain;
-            z-index: -2;
-            /* transform: rotate(90deg); */
-    
-        }
+    .mage::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white url('images/mage.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        z-index: -2;
+        /* transform: rotate(90deg); */
+
+    }
 
    .rotate::before {
     transform: rotate(180deg);

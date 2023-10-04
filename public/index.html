@@ -20,7 +20,7 @@
             <div id="board">
                 <div class="field" v-for="(elem,index) in gd.fields" @click="handleField(elem)"
                     :class="getDynamicClass2(elem)" :id="'field'+elem.x+''+elem.y" :key="index">
-                    <span v-if="elem.life" class="life" >{{elem.life}}</span><span v-if="elem.life"
+                    <span v-if="elem.life" class="life">{{elem.life}}</span><span v-if="elem.life"
                         class="attack">{{elem.attack}}</span>
 
                     <span v-if="elem.player == 1"></span>
@@ -64,6 +64,16 @@
 
     <script>
 
+        let socketready = 0;
+
+        var conn = new WebSocket('ws://localhost:8081');
+        conn.onopen = function (e) {
+
+            console.log("Connection established!");
+            socketready = 1;
+        };
+
+
         function copyProperties(source, target, excludedProperties) {
             for (const prop in source) {
                 if (!excludedProperties.includes(prop)) {
@@ -75,7 +85,8 @@
         let app = new Vue({
             el: '#app',
             data: {
-                gd:{
+                gd: {
+                    turns:0,
                     buycode: '',
                     placebool: false,
                     messages: [],
@@ -115,6 +126,7 @@
 
             },
             mounted() {
+                let self = this;
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 10; j++) {
                         this.gd.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null })
@@ -129,6 +141,11 @@
 
 
                 this.next();
+
+                conn.onmessage = function (e) {
+                    console.log('MESSAGE');
+                    self.load();
+                };
 
             },
             computed: {
@@ -147,9 +164,10 @@
             },
             methods: {
                 async save() {
-                    axios.post('api/save.php', this.gd);
+                    await axios.post('api/save.php', this.gd);
                 },
                 async load() {
+                    console.log('load');
                     let self = this;
                     await axios.get('api/load.php').then((res) => self.gd = res.data);
                 },
@@ -187,6 +205,18 @@
                             this.gd.players.find((el) => el.id == self.activeplayer).mana += 1;
                         }
                     }
+                    if(this.gd.turns > 0){
+                        this.save();
+                        conn.send('load');
+                    }
+
+                    this.gd.turns = this.gd.turns + 1;
+
+                    
+
+                    // if (socketready) {
+                    //     conn.send('load');
+                    // }
 
                 },
                 setGreens() {
@@ -368,10 +398,10 @@
                         'attacked': elem.attacked,
                         'bolticon': this.gd.boltbool,
                         'add': this.gd.placebool && !elem.type,
-                        'skeleton' :elem.code == 'skeleton',
+                        'skeleton': elem.code == 'skeleton',
                         'mage': elem.code == 'mage',
 
-                        rotate:elem.player == 2
+                        rotate: elem.player == 2
                     };
                 },
 
