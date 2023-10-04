@@ -51,10 +51,14 @@
 
 
         <br>
+
+        <button @click="save">Zapisz</button>
+        <button @click="load">Załaduj</button>
+
         <!-- <button @click="next">Koniec tury</button> -->
     </div>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
     <script src="maxprop.js"></script>
     <script src="vue.js"></script>
 
@@ -142,6 +146,13 @@
                 }
             },
             methods: {
+                async save() {
+                    axios.post('api/save.php', this.gd);
+                },
+                async load() {
+                    let self = this;
+                    await axios.get('api/load.php').then((res) => self.gd = res.data);
+                },
                 buy() {
                     this.gd.placebool = true;
                 },
@@ -162,7 +173,7 @@
                     }
 
                     if (!nextobj) {
-
+                        return;
                     }
 
                     let theobject = this.gd.fields.find((el) => el.x == nextobj.x && el.y == nextobj.y).active = true;
@@ -234,11 +245,11 @@
 
 
                                     if (objectfieldnew.life <= 0) {
-                                        this.gd.clearobject(objectfieldnew);
+                                        this.clearobject(objectfieldnew);
                                     }
 
                                     if (objectfieldold.life <= 0) {
-                                        this.gd.clearobject(objectfieldold);
+                                        this.clearobject(objectfieldold);
                                     }
 
 
