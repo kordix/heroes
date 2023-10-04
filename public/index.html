@@ -206,8 +206,11 @@
                         }
                     }
                     if(this.gd.turns > 0){
-                        this.save();
-                        conn.send('load');
+                        await axios.post('api/save.php', this.gd);
+
+                        setTimeout(()=>{
+                           conn.send('load');
+                        },1000);
                     }
 
                     this.gd.turns = this.gd.turns + 1;
