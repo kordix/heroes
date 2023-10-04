@@ -174,7 +174,7 @@
                 buy() {
                     this.gd.placebool = true;
                 },
-                next() {
+                async next() {
                     this.gd.messages = [];
                     let self = this.gd;
                     if (this.gd.fields.find((el) => el.active == true)) {
