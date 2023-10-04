@@ -18,7 +18,7 @@
 
 
             <div id="board">
-                <div class="field" v-for="(elem,index) in fields" @click="handleField(elem)"
+                <div class="field" v-for="(elem,index) in gd.fields" @click="handleField(elem)"
                     :class="getDynamicClass2(elem)" :id="'field'+elem.x+''+elem.y" :key="index">
                     <span v-if="elem.life" class="life" >{{elem.life}}</span><span v-if="elem.life"
                         class="attack">{{elem.attack}}</span>
@@ -32,18 +32,18 @@
                 <p>Czary:</p>
                 <button @click="boltbool = true" alt="zadaje 5 dimejdża">Piorun (5)</button>
 
-                <p v-for="elem in messages">{{elem}}</p>
+                <p v-for="elem in gd.messages">{{elem}}</p>
             </div>
 
             <div>
                 Kup jednostki:
 
-                <select name="" id="" v-model="buycode">
+                <select name="" id="" v-model="gd.buycode">
                     <option value="skeleton">Szkielet (koszt 10)</option>
                     <option value="mage">Mag (koszt 15)</option>
                 </select>
 
-                <button @click="buy" v-if="buycode">Kup</button>
+                <button @click="buy" v-if="gd.buycode">Kup</button>
 
             </div>
 
@@ -68,53 +68,52 @@
             }
         }
 
-
-
-
         let app = new Vue({
             el: '#app',
             data: {
-                buycode: '',
-                placebool: false,
-                messages: [],
-                boltbool: false,
-                players: [
-                    { id: 1, mana: 9, gold: 50 },
-                    { id: 2, mana: 9, gold: 50 },
-                ],
-                gold: [100, 100],
-                activefieldbool: false,
-                activefield: {},
-                enemytypes: [
-                    {
-                        type: 'enemy',
-                        code: 'skeleton',
-                        color: 'red',
-                        attack: 2,
-                        life: 10,
-                        speed: 4,
-                        active: false,
-                        cost: 10
-                    },
-                    {
-                        type: 'enemy',
-                        code: 'mage',
-                        color: 'blue',
-                        attack: 6,
-                        life: 5,
-                        speed: 2,
-                        active: false,
-                        cost: 15
+                gd:{
+                    buycode: '',
+                    placebool: false,
+                    messages: [],
+                    boltbool: false,
+                    players: [
+                        { id: 1, mana: 9, gold: 50 },
+                        { id: 2, mana: 9, gold: 50 },
+                    ],
+                    gold: [100, 100],
+                    activefieldbool: false,
+                    activefield: {},
+                    enemytypes: [
+                        {
+                            type: 'enemy',
+                            code: 'skeleton',
+                            color: 'red',
+                            attack: 2,
+                            life: 10,
+                            speed: 4,
+                            active: false,
+                            cost: 10
+                        },
+                        {
+                            type: 'enemy',
+                            code: 'mage',
+                            color: 'blue',
+                            attack: 6,
+                            life: 5,
+                            speed: 2,
+                            active: false,
+                            cost: 15
 
-                    }
-                ],
-                fields: []
+                        }
+                    ],
+                    fields: []
+                }
 
             },
             mounted() {
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 10; j++) {
-                        this.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null })
+                        this.gd.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null })
                     }
                 }
 
@@ -131,12 +130,12 @@
             computed: {
                 activeplayerobject() {
                     let self = this;
-                    return this.players.find((el) => el.id == self.activeplayer)
+                    return this.gd.players.find((el) => el.id == self.activeplayer)
 
                 },
                 activeplayer() {
-                    if (this.fields.find((el) => el.active)) {
-                        return this.fields.find((el) => el.active).player
+                    if (this.gd.fields.find((el) => el.active)) {
+                        return this.gd.fields.find((el) => el.active).player
                     } else {
 
                     }
@@ -144,21 +143,21 @@
             },
             methods: {
                 buy() {
-                    this.placebool = true;
+                    this.gd.placebool = true;
                 },
                 next() {
-                    this.messages = [];
-                    let self = this;
-                    if (this.fields.find((el) => el.active == true)) {
-                        this.fields.find((el) => el.active == true).active = false;
+                    this.gd.messages = [];
+                    let self = this.gd;
+                    if (this.gd.fields.find((el) => el.active == true)) {
+                        this.gd.fields.find((el) => el.active == true).active = false;
                     }
-                    let nextobj = maxProp(this.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
+                    let nextobj = maxProp(this.gd.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
                     if (!nextobj) {
-                        this.fields.forEach(el => {
+                        this.gd.fields.forEach(el => {
                             el.moved = false;
                         });
 
-                        nextobj = maxProp(this.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
+                        nextobj = maxProp(this.gd.fields.filter((el) => !el.active && !el.moved && el.code), 'speed', false);
 
                     }
 
@@ -166,26 +165,26 @@
 
                     }
 
-                    let theobject = this.fields.find((el) => el.x == nextobj.x && el.y == nextobj.y).active = true;
+                    let theobject = this.gd.fields.find((el) => el.x == nextobj.x && el.y == nextobj.y).active = true;
                     theobject.active = true;
 
 
                     this.setGreens();
 
                     if (this.activeplayer) {
-                        if (this.players.find((el) => el.id == self.activeplayer)) {
-                            this.players.find((el) => el.id == self.activeplayer).mana += 1;
+                        if (this.gd.players.find((el) => el.id == self.activeplayer)) {
+                            this.gd.players.find((el) => el.id == self.activeplayer).mana += 1;
                         }
                     }
 
                 },
                 setGreens() {
-                    let self = this;
-                    let activefieldobject = this.fields.find((el) => el.active == true);
+                    let self = this.gd;
+                    let activefieldobject = this.gd.fields.find((el) => el.active == true);
 
                     if (activefieldobject) {
-                        for (let i = 0; i < this.fields.length; i++) {
-                            let elem = this.fields[i];
+                        for (let i = 0; i < this.gd.fields.length; i++) {
+                            let elem = this.gd.fields[i];
 
                             let roznica = Math.abs(activefieldobject.x - elem.x) + Math.abs(activefieldobject.y - elem.y);
                             if (roznica <= activefieldobject.speed) {
@@ -200,9 +199,9 @@
 
                 },
                 placeEnemy(x, y, enemycode, player) {
-                    let objectfield = this.fields.find((el) => el.x == x && el.y == y);
+                    let objectfield = this.gd.fields.find((el) => el.x == x && el.y == y);
                     objectfield.player = player;
-                    let enemyobject = this.enemytypes.find(el => el.code == enemycode);
+                    let enemyobject = this.gd.enemytypes.find(el => el.code == enemycode);
 
                     for (let prop in enemyobject) {
                         if (enemyobject.hasOwnProperty(prop)) {
@@ -212,9 +211,9 @@
                 },
                 move(x, y, x2, y2) {
 
-                    const objectfieldold = this.fields.find((el) => el.x == x && el.y == y);
+                    const objectfieldold = this.gd.fields.find((el) => el.x == x && el.y == y);
 
-                    const objectfieldnew = this.fields.find((el) => el.x == x2 && el.y == y2);
+                    const objectfieldnew = this.gd.fields.find((el) => el.x == x2 && el.y == y2);
 
                     if (document.querySelector('#field' + x2 + y2).classList.contains('green')) {
                         if (!objectfieldnew.type) {
@@ -235,11 +234,11 @@
 
 
                                     if (objectfieldnew.life <= 0) {
-                                        this.clearobject(objectfieldnew);
+                                        this.gd.clearobject(objectfieldnew);
                                     }
 
                                     if (objectfieldold.life <= 0) {
-                                        this.clearobject(objectfieldold);
+                                        this.gd.clearobject(objectfieldold);
                                     }
 
 
@@ -272,15 +271,15 @@
                 },
                 handleField(elem) {
                     let self = this;
-                    let ap = this.players.find((el) => el.id == self.activeplayer);
+                    let ap = this.gd.players.find((el) => el.id == self.activeplayer);
 
 
-                    if (this.placebool && this.buycode) {
-                        let cost = this.enemytypes.find((el) => el.code == self.buycode).cost;
+                    if (this.gd.placebool && this.gd.buycode) {
+                        let cost = this.gd.enemytypes.find((el) => el.code == self.gd.buycode).cost;
                         if (ap.gold < cost) {
-                            this.messages.push('ZA MAŁO ZŁOTA');
+                            this.gd.messages.push('ZA MAŁO ZŁOTA');
 
-                            this.placebool = false;
+                            this.gd.placebool = false;
                             return
                         }
 
@@ -288,7 +287,7 @@
                             if (elem.x == 9) {
 
                             } else {
-                                this.messages.push('KŁADZ JEDNOSTKI W PIERWSZYM RZĘDZIE');
+                                this.gd.messages.push('KŁADZ JEDNOSTKI W PIERWSZYM RZĘDZIE');
                                 return;
                             }
                         }
@@ -297,38 +296,38 @@
                             if (elem.x === 0) {
 
                             } else {
-                                this.messages.push('KŁADZ JEDNOSTKI W PIERWSZYM RZĘDZIE');
+                                this.gd.messages.push('KŁADZ JEDNOSTKI W PIERWSZYM RZĘDZIE');
                                 return;
                             }
                         }
 
                         if (!elem.type) {
-                            this.placeEnemy(elem.x, elem.y, this.buycode, this.activeplayer);
-                            this.placebool = false;
-                            ap.gold -= this.enemytypes.find((el) => el.code == self.buycode).cost
+                            this.placeEnemy(elem.x, elem.y, this.gd.buycode, this.activeplayer);
+                            this.gd.placebool = false;
+                            ap.gold -= this.gd.enemytypes.find((el) => el.code == self.gd.buycode).cost
                             return;
                         }
                     }
 
-                    if (this.boltbool) {
+                    if (this.gd.boltbool) {
                         if (ap.mana <= 5) {
 
-                            self.messages.push('za mało many');
+                            self.gd.messages.push('za mało many');
                         }
                         if (elem.type && ap.mana >= 5) {
                             ap.mana -= 5;
                             elem.life -= 2;
                             if (elem.life <= 0) {
-                                this.clearobject(elem);
+                                this.gd.clearobject(elem);
                             }
                         }
-                        this.boltbool = false;
+                        this.gd.boltbool = false;
                         return
                     }
 
 
-                    if (this.fields.find((el) => el.active)) {
-                        this.move(this.fields.find((el) => el.active).x, this.fields.find((el) => el.active).y, elem.x, elem.y);
+                    if (this.gd.fields.find((el) => el.active)) {
+                        this.move(this.gd.fields.find((el) => el.active).x, this.gd.fields.find((el) => el.active).y, elem.x, elem.y);
                     }
 
                 },
@@ -336,7 +335,7 @@
                     let self = this;
                     let green = false;
                     let yellow = false;
-                    let activefieldobject = this.fields.find((el) => el.active == true);
+                    let activefieldobject = this.gd.fields.find((el) => el.active == true);
 
                     let dupa = 'skeleton';
 
@@ -356,8 +355,8 @@
                         // [elem.color]: elem.color,
                         'green': elem.green,
                         'attacked': elem.attacked,
-                        'bolticon': this.boltbool,
-                        'add': this.placebool && !elem.type,
+                        'bolticon': this.gd.boltbool,
+                        'add': this.gd.placebool && !elem.type,
                         'skeleton' :elem.code == 'skeleton',
                         'mage': elem.code == 'mage',
 
