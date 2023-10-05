@@ -12,7 +12,7 @@
 <body>
 
     <div id="app">
-        <div style="border:1px black solid;width:900px;padding:5px" v-if="bootinfo">
+        <div style="border:1px black solid;width:900px;padding:5px">
         <div v-if="!playerbool">
                 <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM WYBIERZESZ GRACZA</p>
                 <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied" @click="setPlayer(elem)">Gracz {{elem.id}}</button>
@@ -20,8 +20,10 @@
         </div>
 
         
-            <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
-            <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
+            <div v-if="bootinfo" @click="bootinfo = false" id="bootinfo">
+                <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
+                <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
+            </div>
 
             <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
 
