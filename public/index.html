@@ -61,7 +61,7 @@
                 <div style="clear:both"></div>
 
                 <p>Czary:</p>
-                <button @click="boltbool = true" alt="zadaje 5 dimejdża">Piorun (5)</button>
+                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (5)</button>
 
                 <p v-for="elem in gd.messages">{{elem}}</p>
             </div>
@@ -264,12 +264,6 @@
 
                     this.gd.turns = this.gd.turns + 1;
 
-                    
-
-                    // if (socketready) {
-                    //     conn.send('load');
-                    // }
-
                 },
                 setGreens() {
                     let self = this.gd;
@@ -362,6 +356,14 @@
 
 
                 },
+                handleBolt(){
+                    if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.boltbool = true
+
+                },
                 handleField(elem) {
                     let self = this;
                     let ap = this.gd.players.find((el) => el.id == self.activeplayer);
@@ -419,7 +421,7 @@
                             ap.mana -= 5;
                             elem.life -= 2;
                             if (elem.life <= 0) {
-                                this.gd.clearobject(elem);
+                                this.clearobject(elem);
                             }
                         }
                         this.gd.boltbool = false;
