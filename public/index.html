@@ -12,25 +12,37 @@
 <body>
 
     <div id="app">
+        <div style="border:1px black solid;width:900px;padding:5px" v-if="bootinfo">
         <div v-if="!playerbool">
                 <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM WYBIERZESZ GRACZA</p>
                 <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied" @click="setPlayer(elem)">Gracz {{elem.id}}</button>
                 <br><br>
         </div>
 
-        <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
-        <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
+        
+            <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
+            <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
 
-        <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
+            <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
 
-        <p v-if="!gd.players[1].occupied">Oczekiwanie na gracza 2</p>
+            <p v-if="!gd.players[1].occupied">Oczekiwanie na gracza 2</p>
 
 
-        <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
-        <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
+            <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
+            <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
+            <div v-if="gd.players[0].occupied && gd.players[1].occupied">
+                <p style="font-weight:bold;color:green" v-if="activeplayer == yourplayer">TWOJA TURA</p>
+                <p v-else style="font-weight:bold;color:red">TURA PRZECIWNIKA</p>
+            </div>
 
-        <span>Gracz:{{activeplayer }}</span><span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
+
+        </div>
+
+        <p style="font-weight:bold">
+        <span style="margin-right:5px">Gracz:{{activeplayer }}</span><span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
             Gold:{{activeplayerobject.gold}}</span>
+        </p>
+            
         <div style="display:flex">
 
 
@@ -108,6 +120,7 @@
         let app = new Vue({
             el: '#app',
             data: {
+                bootinfo:true,
                 playerbool:false,
                 yourplayer:0,
                 gd: {
@@ -117,8 +130,8 @@
                     messages: [],
                     boltbool: false,
                     players: [
-                        { id: 1, mana: 9, gold: 50 ,occupied:false},
-                        { id: 2, mana: 9, gold: 50 ,occupied:false},
+                        { id: 1, mana: 10, gold: 50 ,occupied:false},
+                        { id: 2, mana: 10, gold: 50 ,occupied:false},
                     ],
                     gold: [100, 100],
                     activefieldbool: false,
