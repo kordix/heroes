@@ -13,10 +13,10 @@
 
     <div id="app">
         <div v-if="!playerbool">
+                <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM WYBIERZESZ GRACZA</p>
                 <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied" @click="setPlayer(elem)">Gracz {{elem.id}}</button>
                 <br><br>
         </div>
-
 
         <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
         <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
@@ -28,9 +28,6 @@
 
         <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
         <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
-
-
-
 
         <span>Gracz:{{activeplayer }}</span><span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
             Gold:{{activeplayerobject.gold}}</span>
@@ -85,6 +82,12 @@
     <script>
 
         let socketready = 0;
+
+        let wsstring = 'ws://localhost:8082';
+
+        if(window.location.hostname == 'heroes.kordi.com.pl'){
+            wsstring = 'ws://91.228.198.26:8082';
+        }
 
         var conn = new WebSocket('ws://localhost:8082');
         conn.onopen = function (e) {

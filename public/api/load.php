@@ -1,6 +1,6 @@
 <?php
 
-$sciezka_do_pliku = 'gra.txt';
+$sciezka_do_pliku = 'game.txt';
 
 $zawartosc = file_get_contents($sciezka_do_pliku);
 
