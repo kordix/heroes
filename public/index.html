@@ -195,7 +195,7 @@
                     await axios.post('api/save.php', this.gd);
                     setTimeout(()=>{
                         conn.send('load');
-                    })
+                    },400)
                 },
                 async save() {
                     await axios.post('api/save.php', this.gd);
@@ -244,7 +244,7 @@
 
                         setTimeout(()=>{
                            conn.send('load');
-                        },1000);
+                        },400);
                     }
 
                     this.gd.turns = this.gd.turns + 1;
