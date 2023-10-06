@@ -5,7 +5,7 @@
        float: left;
        transition: .3s;
        position: relative;
-        box-sizing: border-box;  
+       box-sizing: border-box;
    }
 
    #board {
@@ -14,7 +14,7 @@
    }
 
    .red {
-       border:2px red solid;
+       border: 2px red solid;
        opacity: 0.4 !important;
        cursor: pointer !important;
    }
@@ -22,7 +22,7 @@
    .yellow {
        /* background: rgba(255,255,0,0.8); */
        border: 4px yellow solid !important;
-        /* box-sizing: border-box; */
+       /* box-sizing: border-box; */
    }
 
    .green {
@@ -105,6 +105,21 @@
 
    }
 
+   .rat::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: white url('images/rat.png');
+       background-repeat: no-repeat;
+       background-size: contain;
+       z-index: -2;
+       /* transform: rotate(90deg); */
+
+   }
+
    .rotate::before {
        transform: rotate(180deg);
 
@@ -120,6 +135,6 @@
        width: 10px;
        height: 10px;
        border-radius: 90%;
-       position:absolute;
-       display:none;
+       position: absolute;
+       display: none;
    }

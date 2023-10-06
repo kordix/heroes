@@ -77,6 +77,8 @@
                 <select name="" id="" v-model="gd.buycode">
                     <option value="skeleton">Szkielet (koszt 10)</option>
                     <option value="mage">Mag (koszt 15)</option>
+                    <option value="rat">Szczur (koszt 2)</option>
+
                 </select>
 
                 <button @click="buy" v-if="gd.buycode">Kup</button>
@@ -369,6 +371,7 @@
 
                         objectfieldnew.active = false;
                         this.next();
+                        return;
                     }
 
                     //atak
@@ -533,6 +536,8 @@
                         'add': this.gd.placebool && !elem.type,
                         'skeleton': elem.code == 'skeleton',
                         'mage': elem.code == 'mage',
+                        'rat': elem.code == 'rat',
+
 
                         rotate: elem.player == 2
                     };
