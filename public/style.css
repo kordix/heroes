@@ -121,8 +121,7 @@
    }
 
    .rotate::before {
-       transform: rotate(180deg);
-
+    transform: scaleX(-1);
    }
 
    #bootinfo:hover {
