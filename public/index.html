@@ -367,11 +367,13 @@
                             this.clearobject(objectfieldold);
 
 
-                        }
 
-                        objectfieldnew.active = false;
-                        this.next();
-                        return;
+
+                            objectfieldnew.active = false;
+                            this.next();
+                            return;
+
+                        }
                     }
 
                     //atak
@@ -437,6 +439,7 @@
 
                 },
                 handleField(elem) {
+                    console.log('handlefield');
                     let self = this;
                     let ap = this.gd.players.find((el) => el.id == self.activeplayer);
 
