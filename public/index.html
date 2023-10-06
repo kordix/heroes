@@ -75,7 +75,7 @@
                 Kup jednostki:
 
                 <select name="" id="" v-model="gd.buycode">
-                    <option value="skeleton">Szkielet (koszt 10)</option>
+                    <option value="skeleton">Szkielet (koszt 8)</option>
                     <option value="mage">Mag (koszt 15)</option>
                     <option value="rat">Szczur (koszt 2)</option>
 
@@ -180,16 +180,16 @@
                             type: 'enemy',
                             code: 'skeleton',
                             attack: 4,
-                            life: 10,
-                            speed: 4,
+                            life: 8,
+                            speed: 3,
                             active: false,
-                            cost: 5,
+                            cost: 8,
                             range: 1
                         },
                         {
                             type: 'enemy',
                             code: 'mage',
-                            attack: 3,
+                            attack: 5,
                             life: 5,
                             speed: 2,
                             active: false,
@@ -203,8 +203,8 @@
                             life: 1,
                             speed: 2,
                             active: false,
-                            cost: 1,
-                            range: 5
+                            cost: 2,
+                            range: 1
                         }
                     ],
                     fields: []
@@ -220,9 +220,9 @@
                 }
 
                 // this.placeEnemy(1, 1, 'mage', 1);
-                this.placeEnemy(0, 5, 'mage', 1);
+                this.placeEnemy(0, 5, 'skeleton', 1);
 
-                this.placeEnemy(9, 5, 'mage', 2);
+                this.placeEnemy(9, 5, 'skeleton', 2);
                 // this.placeEnemy(9, 6, 'skeleton', 2);
 
 
@@ -274,7 +274,7 @@
                 },
                 async next() {
                     this.gd.messages = [];
-                    let self = this.gd;
+                    let self = this;
                     if (this.gd.fields.find((el) => el.active == true)) {
                         this.gd.fields.find((el) => el.active == true).active = false;
                     }
@@ -391,7 +391,9 @@
                                     }
                                     //kontratak
                                     if (Math.abs(x2 - x) <= 1 && Math.abs(y2 - y) <= 1) {
-                                        objectfieldold.life -= Math.floor(objectfieldnew.attack) / 2;
+                                        if(objectfieldnew.life > 0){
+                                            objectfieldold.life -= Math.floor(objectfieldnew.attack / 2);
+                                        }
                                     }
 
 

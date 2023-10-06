@@ -87,7 +87,7 @@
    }
 
    .bolticon {
-       cursor: url('images/bolt.png'), auto;
+       cursor: url('images/bolt.png'), auto !important;
    }
 
    .bolticon:hover {
