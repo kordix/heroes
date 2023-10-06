@@ -31,7 +31,7 @@
    .red {
        border: 2px red solid;
        /* opacity: 0.4 !important; */
-       cursor: pointer !important;
+       cursor: pointer;
    }
 
    .red::before {
