@@ -4,27 +4,32 @@
        height: 50px;
        float: left;
        transition: .3s;
-       position:relative;
+       position: relative;
+        box-sizing: border-box;  
    }
 
    #board {
-       width: 550px;
+       width: 500px;
+       position: relative;
    }
 
    .red {
-
+       border:2px red solid;
+       opacity: 0.4 !important;
+       cursor: pointer !important;
    }
 
    .yellow {
        /* background: rgba(255,255,0,0.8); */
-       border: 1px yellow solid !important;
+       border: 4px yellow solid !important;
+        /* box-sizing: border-box; */
    }
 
    .green {
-        /* border:1px green solid; */
+       /* border:1px green solid; */
        background: green;
        opacity: 0.6;
-       cursor:pointer;
+       cursor: pointer;
    }
 
    .blue {
@@ -42,14 +47,14 @@
    .life {
        color: green;
        background: white;
-       z-index:1000;
+       z-index: 1000;
    }
 
    .attack {
        color: red;
        background: white;
        margin-left: 5px;
-       z-index:1000;
+       z-index: 1000;
    }
 
    .bolticon {
@@ -61,50 +66,60 @@
    }
 
    .add {
-       cursor: cell;
+       cursor: cell !important;
    }
 
 
    .add:hover {
-       opacity:0.3;
-       background:yellow;
+       opacity: 0.3;
+       background: yellow;
    }
 
-   .skeleton::before{
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:white url('images/skeleton.png');
-        background-repeat:no-repeat;
-        background-size: contain;
-        z-index:-2;
-    /* transform: rotate(90deg); */
+   .skeleton::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: white url('images/skeleton.png');
+       background-repeat: no-repeat;
+       background-size: contain;
+       z-index: -2;
+       /* transform: rotate(90deg); */
 
    }
 
-    .mage::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white url('images/mage.png');
-        background-repeat: no-repeat;
-        background-size: contain;
-        z-index: -2;
-        /* transform: rotate(90deg); */
+   .mage::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: white url('images/mage.png');
+       background-repeat: no-repeat;
+       background-size: contain;
+       z-index: -2;
+       /* transform: rotate(90deg); */
 
-    }
+   }
 
    .rotate::before {
-    transform: rotate(180deg);
+       transform: rotate(180deg);
 
    }
 
-   #bootinfo:hover{
-    opacity:0.6;
+   #bootinfo:hover {
+       opacity: 0.6;
+   }
+
+   #kula {
+       background: red;
+       border: 1px black solid;
+       width: 10px;
+       height: 10px;
+       border-radius: 90%;
+       position:absolute;
+       display:none;
    }

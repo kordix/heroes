@@ -13,13 +13,15 @@
 
     <div id="app">
         <div style="border:1px black solid;width:900px;padding:5px">
-        <div v-if="!playerbool">
-                <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM WYBIERZESZ GRACZA</p>
-                <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied" @click="setPlayer(elem)">Gracz {{elem.id}}</button>
+            <div v-if="!playerbool">
+                <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM
+                    WYBIERZESZ GRACZA</p>
+                <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied"
+                    @click="setPlayer(elem)">Gracz {{elem.id}}</button>
                 <br><br>
-        </div>
+            </div>
 
-        
+
             <div v-if="bootinfo" @click="bootinfo = false" id="bootinfo">
                 <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
                 <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
@@ -41,10 +43,11 @@
         </div>
 
         <p style="font-weight:bold">
-        <span style="margin-right:5px">Gracz:{{activeplayer }}</span><span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
-            Gold:{{activeplayerobject.gold}}</span>
+            <span style="margin-right:5px">Gracz:{{activeplayer }}</span><span
+                v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
+                Gold:{{activeplayerobject.gold}}</span>
         </p>
-            
+
         <div style="display:flex">
 
 
@@ -64,6 +67,8 @@
                 <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (5)</button>
 
                 <p v-for="elem in gd.messages">{{elem}}</p>
+
+                <div id="kula"></div>
             </div>
 
             <div>
@@ -86,6 +91,8 @@
         <button @click="save">Zapisz</button>
         <button @click="load">Załaduj</button>
 
+        <button @click="animacja">Animacja</button>
+
         <!-- <button @click="next">Koniec tury</button> -->
     </div>
 
@@ -95,11 +102,14 @@
 
     <script>
 
+    </script>
+    <script>
+
         let socketready = 0;
 
         let wsstring = 'ws://localhost:8082';
 
-        if(window.location.hostname == 'heroes.kordi.com.pl'){
+        if (window.location.hostname == 'heroes.kordi.com.pl') {
             wsstring = 'ws://91.228.198.26:8082';
         }
 
@@ -119,21 +129,46 @@
             }
         }
 
+        function animuj(idObiektu, x, y, xDocelowe, yDocelowe, predkosc) {
+            const obiekt = document.getElementById(idObiektu);
+            const deltaX = xDocelowe - x;
+            const deltaY = yDocelowe - y;
+            obiekt.style.display = 'block';
+            const odleglosc = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const kroki = Math.ceil(odleglosc / predkosc);
+            const stepX = deltaX / kroki;
+            const stepY = deltaY / kroki;
+            let krok = 0;
+
+            const interval = setInterval(() => {
+                krok++;
+                x += stepX;
+                y += stepY;
+                obiekt.style.left = x + 'px';
+                obiekt.style.top = y + 'px';
+
+                if (krok >= kroki) {
+                    clearInterval(interval);
+                    obiekt.style.display = 'none';
+                }
+            }, 10);
+        }
+
         let app = new Vue({
             el: '#app',
             data: {
-                bootinfo:true,
-                playerbool:false,
-                yourplayer:0,
+                bootinfo: true,
+                playerbool: false,
+                yourplayer: 0,
                 gd: {
-                    turns:0,
+                    turns: 0,
                     buycode: '',
                     placebool: false,
                     messages: [],
                     boltbool: false,
                     players: [
-                        { id: 1, mana: 10, gold: 50 ,occupied:false},
-                        { id: 2, mana: 10, gold: 50 ,occupied:false},
+                        { id: 1, mana: 10, gold: 50, occupied: false },
+                        { id: 2, mana: 10, gold: 50, occupied: false },
                     ],
                     gold: [100, 100],
                     activefieldbool: false,
@@ -142,23 +177,32 @@
                         {
                             type: 'enemy',
                             code: 'skeleton',
-                            color: 'red',
-                            attack: 2,
+                            attack: 4,
                             life: 10,
                             speed: 4,
                             active: false,
-                            cost: 10
+                            cost: 5,
+                            range: 1
                         },
                         {
                             type: 'enemy',
                             code: 'mage',
-                            color: 'blue',
-                            attack: 6,
+                            attack: 3,
                             life: 5,
                             speed: 2,
                             active: false,
-                            cost: 15
-
+                            cost: 15,
+                            range: 5
+                        },
+                        {
+                            type: 'enemy',
+                            code: 'rat',
+                            attack: 1,
+                            life: 1,
+                            speed: 2,
+                            active: false,
+                            cost: 1,
+                            range: 5
                         }
                     ],
                     fields: []
@@ -174,9 +218,9 @@
                 }
 
                 // this.placeEnemy(1, 1, 'mage', 1);
-                this.placeEnemy(0, 5, 'skeleton', 1);
+                this.placeEnemy(0, 5, 'mage', 1);
 
-                this.placeEnemy(9, 5, 'skeleton', 2);
+                this.placeEnemy(9, 5, 'mage', 2);
                 // this.placeEnemy(9, 6, 'skeleton', 2);
 
 
@@ -203,14 +247,17 @@
                 }
             },
             methods: {
-                async setPlayer(elem){
+                animacja() {
+                    animuj('kula', 50, 50, 200, 200, 5)
+                },
+                async setPlayer(elem) {
                     this.yourplayer = elem.id;
                     this.playerbool = true;
                     elem.occupied = true;
                     await axios.post('api/save.php', this.gd);
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         conn.send('load');
-                    },400)
+                    }, 400)
                 },
                 async save() {
                     await axios.post('api/save.php', this.gd);
@@ -254,12 +301,12 @@
                             this.gd.players.find((el) => el.id == self.activeplayer).mana += 1;
                         }
                     }
-                    if(this.gd.turns > 0){
+                    if (this.gd.turns > 0) {
                         await axios.post('api/save.php', this.gd);
 
-                        setTimeout(()=>{
-                           conn.send('load');
-                        },400);
+                        setTimeout(() => {
+                            conn.send('load');
+                        }, 400);
                     }
 
                     this.gd.turns = this.gd.turns + 1;
@@ -278,6 +325,12 @@
                                 elem.green = true;
                             } else {
                                 elem.green = false;
+                            }
+
+                            if (roznica <= activefieldobject.range) {
+                                elem.red = true;
+                            } else {
+                                elem.red = false;
                             }
 
                         }
@@ -302,22 +355,39 @@
 
                     const objectfieldnew = this.gd.fields.find((el) => el.x == x2 && el.y == y2);
 
+                    //ruch
                     if (document.querySelector('#field' + x2 + y2).classList.contains('green')) {
+
                         if (!objectfieldnew.type) {
                             copyProperties(objectfieldold, objectfieldnew, ['x', 'y']);
                             objectfieldnew.moved = true;
 
                             this.clearobject(objectfieldold);
+
+
                         }
 
+                        objectfieldnew.active = false;
+                        this.next();
+                    }
 
+                    //atak
+                    if (document.querySelector('#field' + x2 + y2).classList.contains('red')) {
                         if (objectfieldnew.type == 'enemy') {
                             if (objectfieldold.player != objectfieldnew.player) {
-                                if (Math.abs(x2 - x) <= 1 && Math.abs(y2 - y) <= 1) {
+                                if (Math.abs(x2 - x) <= objectfieldold.range && Math.abs(y2 - y) <= objectfieldold.range) {
 
                                     objectfieldold.moved = true;
                                     objectfieldnew.life -= objectfieldold.attack;
-                                    objectfieldold.life -= Math.floor(objectfieldnew.attack);
+
+                                    if (objectfieldold.range > 1) {
+                                        console.log(x, y, x2, y2);
+                                        animuj('kula', x * 50 + 20, y * 50 + 20, x2 * 50 + 20, y2 * 50 + 20, 5)
+                                    }
+                                    //kontratak
+                                    if (Math.abs(x2 - x) <= 1 && Math.abs(y2 - y) <= 1) {
+                                        objectfieldold.life -= Math.floor(objectfieldnew.attack) / 2;
+                                    }
 
 
                                     if (objectfieldnew.life <= 0) {
@@ -328,13 +398,12 @@
                                         this.clearobject(objectfieldold);
                                     }
 
-
+                                    objectfieldnew.active = false;
+                                    this.next();
                                 }
                             }
                         }
 
-                        objectfieldnew.active = false;
-                        this.next();
                     }
 
 
@@ -356,7 +425,7 @@
 
 
                 },
-                handleBolt(){
+                handleBolt() {
                     if (this.activeplayer != this.yourplayer) {
                         this.gd.messages.push('TO NIE JEST TWOJA TURA!');
                         return;
@@ -371,7 +440,7 @@
                     console.log(this.gd.yourplayer);
                     console.log(this.activeplayer);
 
-                    if(this.activeplayer != this.yourplayer){
+                    if (this.activeplayer != this.yourplayer) {
                         this.gd.messages.push('TO NIE JEST TWOJA TURA!');
                         return;
                     }
@@ -457,6 +526,8 @@
                         'red': elem.player === 2,
                         // [elem.color]: elem.color,
                         'green': elem.green,
+                        'red': elem.red,
+
                         'attacked': elem.attacked,
                         'bolticon': this.gd.boltbool,
                         'add': this.gd.placebool && !elem.type,
