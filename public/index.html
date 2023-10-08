@@ -115,7 +115,7 @@
             wsstring = 'ws://91.228.198.26:8082';
         }
 
-        var conn = new WebSocket('ws://localhost:8082');
+        var conn = new WebSocket(wsstring);
         conn.onopen = function (e) {
 
             console.log("Connection established!");
