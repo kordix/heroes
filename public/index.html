@@ -64,7 +64,7 @@
                 <div style="clear:both"></div>
 
                 <p>Czary:</p>
-                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (5)</button>
+                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (7)</button>
 
                 <p v-for="elem in gd.messages">{{elem}}</p>
 
@@ -490,13 +490,13 @@
                     }
 
                     if (this.gd.boltbool) {
-                        if (ap.mana <= 5) {
+                        if (ap.mana <= 7) {
 
                             self.gd.messages.push('za mało many');
                         }
-                        if (elem.type && ap.mana >= 5) {
-                            ap.mana -= 5;
-                            elem.life -= 2;
+                        if (elem.type && ap.mana >= 7) {
+                            ap.mana -= 7;
+                            elem.life -= 1;
                             if (elem.life <= 0) {
                                 this.clearobject(elem);
                             }
