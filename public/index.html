@@ -46,9 +46,8 @@
             <span style="margin-right:5px;color:red" v-if="activeplayer === 1">Gracz:{{activeplayer }}</span>
             <span style="margin-right:5px;color:blue" v-if="activeplayer === 2">Gracz:{{activeplayer }}</span>
 
-            
-            <span
-                v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
+
+            <span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
                 Gold:{{activeplayerobject.gold}}</span>
         </p>
 
@@ -63,12 +62,20 @@
 
                     <span v-if="elem.player == 1" class="player1sign"></span>
                     <span v-if="elem.player == 2" class="player2sign"></span>
+                    <span v-if="elem.immunity" class="immunity"></span>
+
 
                 </div>
                 <div style="clear:both"></div>
 
                 <p>Czary:</p>
-                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (12)</button>
+                <button @click="handleBolt">Piorun (12)</button>
+                <button @click="handleSpeeder">Speeder (6)</button>
+                <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
+                <button @click="handleStun">Ogłuszenie (9)</button>
+
+
+
 
                 <p v-for="elem in gd.messages">{{elem}}</p>
 
@@ -86,8 +93,8 @@
                 </select>
 
                 <button @click="buy" v-if="gd.buycode">Kup</button>
-            <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
-            <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
+                <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
+                <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
 
 
             </div>
@@ -99,8 +106,6 @@
 
         <button @click="save">Zapisz</button>
         <button @click="load">Załaduj</button>
-
-        <button @click="animacja">Animacja</button>
 
         <!-- <button @click="next">Koniec tury</button> -->
     </div>
@@ -168,7 +173,7 @@
         let app = new Vue({
             el: '#app',
             data: {
-           
+
                 bootinfo: true,
                 playerbool: false,
                 yourplayer: 0,
@@ -181,6 +186,9 @@
                     placebool: false,
                     messages: [],
                     boltbool: false,
+                    speederbool: false,
+                    immunitybool: false,
+                    stunbool: false,
                     players: [
                         { id: 1, mana: 10, gold: 60, occupied: false },
                         { id: 2, mana: 10, gold: 60, occupied: false },
@@ -196,7 +204,8 @@
                             speed: 3,
                             active: false,
                             cost: 8,
-                            range: 1
+                            range: 1,
+                            immunity: false
                         },
                         {
                             type: 'enemy',
@@ -206,7 +215,8 @@
                             speed: 2,
                             active: false,
                             cost: 15,
-                            range: 5
+                            range: 5,
+                            immunity: false
                         },
                         {
                             type: 'enemy',
@@ -216,7 +226,8 @@
                             speed: 3,
                             active: false,
                             cost: 2,
-                            range: 1
+                            range: 1,
+                            immunity: false
                         },
                         {
                             type: 'enemy',
@@ -226,7 +237,8 @@
                             speed: 2,
                             active: false,
                             cost: 10,
-                            range: 1
+                            range: 1,
+                            immunity: false
                         }
                     ],
                     fields: []
@@ -345,13 +357,18 @@
                             let elem = this.gd.fields[i];
 
                             let roznica = Math.abs(activefieldobject.x - elem.x) + Math.abs(activefieldobject.y - elem.y);
-                            if (roznica <= activefieldobject.speed) {
+                            let skos = false;
+
+                            if (Math.abs(activefieldobject.x - elem.x) === 1 && Math.abs(activefieldobject.y - elem.y) === 1) {
+                                skos = true;
+                            }
+                            if (roznica <= activefieldobject.speed || skos) {
                                 elem.green = true;
                             } else {
                                 elem.green = false;
                             }
 
-                            if (roznica <= activefieldobject.range) {
+                            if (roznica <= activefieldobject.range || skos) {
                                 elem.red = true;
                             } else {
                                 elem.red = false;
@@ -451,6 +468,7 @@
                     obj.active = false;
                     obj.speed = false;
                     obj.player = null;
+                    obj.immunity = false;
                     this.checkWin();
 
 
@@ -472,6 +490,28 @@
                         return;
                     }
                     this.gd.boltbool = true
+
+                },
+                handleSpeeder() {
+                    if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.speederbool = true
+                },
+                handleImmunity() {
+                    if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.immunitybool = true
+                },
+                handleStun() {
+                    if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.stunbool = true
 
                 },
                 handleField(elem) {
@@ -524,7 +564,7 @@
                     }
                     //piorun
                     if (this.gd.boltbool) {
-                        if(elem.player == this.activeplayer){
+                        if (elem.player == this.activeplayer) {
                             return
                         }
                         if (ap.mana <= 12) {
@@ -533,12 +573,64 @@
                         }
                         if (elem.type && ap.mana >= 12) {
                             ap.mana -= 12;
-                            elem.life -= 2;
+                            if (elem.immunity) {
+                                elem.life -= 1;
+                            } else {
+                                elem.life -= 2;
+                            }
                             if (elem.life <= 0) {
                                 this.clearobject(elem);
                             }
                         }
                         this.gd.boltbool = false;
+                        return
+                    }
+                    //speeder
+                    if (this.gd.speederbool) {
+                        if (elem.player != this.activeplayer) {
+                            return
+                        }
+                        if (ap.mana <= 6) {
+                            self.gd.messages.push('za mało many');
+                        }
+                        if (elem.type && ap.mana >= 6) {
+                            ap.mana -= 6;
+                            elem.speed += 4;
+                        }
+                        this.gd.speederbool = false;
+                        this.setGreens();
+                        return
+                    }
+
+                    //odporność magiczna
+                    if (this.gd.immunitybool) {
+                        if (elem.player != this.activeplayer) {
+                            return
+                        }
+                        if (ap.mana <= 5) {
+                            self.gd.messages.push('za mało many');
+                        }
+                        if (elem.type && ap.mana >= 5) {
+                            ap.mana -= 5;
+                            elem.immunity = true;
+                        }
+                        this.gd.immunitybool = false;
+                        return
+                    }
+
+                    //ogłuszenie
+                    if (this.gd.stunbool) {
+                        if (elem.player == this.activeplayer) {
+                            return
+                        }
+                        if (ap.mana <= 9) {
+                            self.gd.messages.push('za mało many');
+                        }
+                        if (elem.type && ap.mana >= 9) {
+                            ap.mana -= 9;
+                            elem.moved = true;
+                        }
+                        this.gd.stunbool = false;
                         return
                     }
 
@@ -575,15 +667,17 @@
 
                         'attacked': elem.attacked,
                         'bolticon': this.gd.boltbool,
+                        'speedericon': this.gd.speederbool,
+                        'immunityicon': this.gd.immunitybool,
+                        'stunicon': this.gd.stunbool,
+
                         'add': this.gd.placebool && !elem.type,
                         'skeleton': elem.code == 'skeleton',
                         'mage': elem.code == 'mage',
                         'rat': elem.code == 'rat',
                         'golem': elem.code == 'golem',
-
-
-
-                        rotate: elem.player == 2
+                        'moved': elem.moved,
+                        'rotate': elem.player == 2
                     };
                 },
 
