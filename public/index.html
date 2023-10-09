@@ -73,6 +73,8 @@
                 <button @click="handleSpeeder">Speeder (6)</button>
                 <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
                 <button @click="handleStun">Ogłuszenie (9)</button>
+                <button @click="handleRanger">Ranger (15)</button>
+
 
 
 
@@ -189,9 +191,10 @@
                     speederbool: false,
                     immunitybool: false,
                     stunbool: false,
+                    rangerbool:false,
                     players: [
-                        { id: 1, mana: 10, gold: 60, occupied: false },
-                        { id: 2, mana: 10, gold: 60, occupied: false },
+                        { id: 1, mana: 15, gold: 60, occupied: false },
+                        { id: 2, mana: 15, gold: 60, occupied: false },
                     ],
                     activefieldbool: false,
                     activefield: {},
@@ -514,6 +517,14 @@
                     this.gd.stunbool = true
 
                 },
+                handleRanger(){
+                      if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.rangerbool = true
+
+                },
                 handleField(elem) {
                     console.log('handlefield');
                     let self = this;
@@ -631,6 +642,29 @@
                             elem.moved = true;
                         }
                         this.gd.stunbool = false;
+                        return
+                    }
+
+                    //ranger
+                    if (this.gd.rangerbool) {
+                        if (elem.player != this.activeplayer) {
+                            return
+                        }
+
+                        if(elem.range <= 1){
+                              this.gd.rangerbool = false;
+                              this.gd.messages.push('TYLKO DLA JEDNOSTEK DYSTANSOWYCH');
+                            return;
+                        }
+                        if (ap.mana <= 15) {
+                            self.gd.messages.push('za mało many');
+                        }
+                        if (elem.type && ap.mana >= 15) {
+                            ap.mana -= 15;
+                            elem.range += 4;
+                            this.setGreens();
+                        }
+                        this.gd.rangerbool = false;
                         return
                     }
 
