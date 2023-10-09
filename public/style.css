@@ -41,7 +41,7 @@
        left: 0;
        width: 100%;
        height: 100%;
-       background: rgba(255,0,0,0.3);
+       background: rgba(255, 0, 0, 0.3);
        background-repeat: repeat;
        background-size: contain;
        z-index: -3;
@@ -165,4 +165,24 @@
        border-radius: 90%;
        position: absolute;
        display: none;
+   }
+
+   .player2sign {
+       display: block;
+       left: 0px;
+       bottom: 0px;
+       position: absolute;
+       width: 10px;
+       height: 10px;
+       background: blue;
+   }
+
+   .player1sign {
+       display: block;
+       right: 0px;
+       bottom: 0px;
+       position: absolute;
+       width: 10px;
+       height: 10px;
+       background: red;
    }
