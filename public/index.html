@@ -43,7 +43,11 @@
         </div>
 
         <p style="font-weight:bold">
-            <span style="margin-right:5px">Gracz:{{activeplayer }}</span><span
+            <span style="margin-right:5px;color:red" v-if="activeplayer === 1">Gracz:{{activeplayer }}</span>
+            <span style="margin-right:5px;color:blue" v-if="activeplayer === 2">Gracz:{{activeplayer }}</span>
+
+            
+            <span
                 v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
                 Gold:{{activeplayerobject.gold}}</span>
         </p>
@@ -64,7 +68,7 @@
                 <div style="clear:both"></div>
 
                 <p>Czary:</p>
-                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (7)</button>
+                <button @click="handleBolt" alt="zadaje 5 dimejdża">Piorun (12)</button>
 
                 <p v-for="elem in gd.messages">{{elem}}</p>
 
@@ -78,7 +82,7 @@
                     <option value="skeleton">Szkielet (koszt 8)</option>
                     <option value="mage">Mag (koszt 15)</option>
                     <option value="rat">Szczur (koszt 2)</option>
-
+                    <option value="golem">Golem (koszt 10)</option>
                 </select>
 
                 <button @click="buy" v-if="gd.buycode">Kup</button>
@@ -212,6 +216,16 @@
                             speed: 3,
                             active: false,
                             cost: 2,
+                            range: 1
+                        },
+                        {
+                            type: 'enemy',
+                            code: 'golem',
+                            attack: 3,
+                            life: 15,
+                            speed: 2,
+                            active: false,
+                            cost: 10,
                             range: 1
                         }
                     ],
@@ -508,15 +522,18 @@
                             return;
                         }
                     }
-
+                    //piorun
                     if (this.gd.boltbool) {
-                        if (ap.mana <= 7) {
+                        if(elem.player == this.activeplayer){
+                            return
+                        }
+                        if (ap.mana <= 12) {
 
                             self.gd.messages.push('za mało many');
                         }
-                        if (elem.type && ap.mana >= 7) {
-                            ap.mana -= 7;
-                            elem.life -= 1;
+                        if (elem.type && ap.mana >= 12) {
+                            ap.mana -= 12;
+                            elem.life -= 2;
                             if (elem.life <= 0) {
                                 this.clearobject(elem);
                             }
@@ -562,6 +579,8 @@
                         'skeleton': elem.code == 'skeleton',
                         'mage': elem.code == 'mage',
                         'rat': elem.code == 'rat',
+                        'golem': elem.code == 'golem',
+
 
 
                         rotate: elem.player == 2

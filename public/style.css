@@ -115,7 +115,6 @@
        background-repeat: no-repeat;
        background-size: contain;
        z-index: -2;
-       /* transform: rotate(90deg); */
 
    }
 
@@ -130,8 +129,19 @@
        background-repeat: no-repeat;
        background-size: contain;
        z-index: -2;
-       /* transform: rotate(90deg); */
+   }
 
+   .golem::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: white url('images/golem.png');
+       background-repeat: no-repeat;
+       background-size: contain;
+       z-index: -2;
    }
 
    .rat::before {
@@ -145,7 +155,6 @@
        background-repeat: no-repeat;
        background-size: contain;
        z-index: -2;
-       /* transform: rotate(90deg); */
 
    }
 
