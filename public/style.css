@@ -155,6 +155,19 @@
        z-index: -2;
    }
 
+   .scout::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: white url('images/scout.png');
+       background-repeat: no-repeat;
+       background-size: contain;
+       z-index: -2;
+   }
+
    .golem::before {
        content: "";
        position: absolute;
