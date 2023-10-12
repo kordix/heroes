@@ -117,7 +117,7 @@
                     <button v-if="gd.placebool" @click="cancel">Anuluj</button>
                     <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
                     <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
-                    <button @click="reset">Resetuj</button>
+
 
 
                 </div>
@@ -145,6 +145,7 @@
 
             <button @click="save">Zapisz</button>
             <button @click="load">Załaduj</button>
+            <button @click="reset">Resetuj</button>
         </div>
         <!-- <button @click="next">Koniec tury</button> -->
     </div>
