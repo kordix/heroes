@@ -34,6 +34,7 @@
        cursor: pointer;
    }
 
+
    .red::before {
        content: "";
        position: absolute;
@@ -42,6 +43,26 @@
        width: 100%;
        height: 100%;
        background: rgba(255, 0, 0, 0.3);
+       background-repeat: repeat;
+       background-size: contain;
+       z-index: -3;
+       box-sizing: border-box;
+   }
+
+   .pink {
+       border: 2px pink solid;
+       /* opacity: 0.4 !important; */
+       cursor: pointer;
+   }
+
+   .pink::before {
+       content: "";
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: rgba(255, 192, 203, 0.8);
        background-repeat: repeat;
        background-size: contain;
        z-index: -3;
@@ -102,6 +123,10 @@
        cursor: url('images/stun.png'), auto !important;
    }
 
+   .fireballicon {
+       cursor: url('images/fireball.png'), auto !important;
+   }
+
    .bolticon:hover {
        opacity: 0.4
    }
@@ -115,6 +140,10 @@
    }
 
    .stunicon:hover {
+       opacity: 0.4
+   }
+
+   .fireballicon:hover {
        opacity: 0.4
    }
 

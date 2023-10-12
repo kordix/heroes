@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        <label for="">Podaj swój login:</label>
+        <input type="text" v-model="login">
+
+        <div v-for="elem in tables" style="border:1px black solid">
+            <p v-if="!elem.player1"> <button @click="sit(elem,'player1')">Usiądź tutaj</button></p>
+            <p v-else>{{elem.player1}}</p>
+            <p v-if="!elem.player2"><button @click="sit(elem,'player2')">Usiądź tutaj</button></p>
+            <p v-else>{{elem.player2}}</p>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+        let socketready = 0;
+
+        let wsstring = 'ws://localhost:8082';
+
+        if (window.location.hostname == 'heroes.kordi.com.pl') {
+            wsstring = 'ws://91.228.198.26:8082';
+        }
+
+
+        var conn = new WebSocket(wsstring);
+        conn.onopen = function (e) {
+            console.log(e);
+            socketready = 1;
+        };
+
+
+        Vue.createApp({
+            data() {
+                return {
+                    login: 'test',
+                    tables: [
+                        { id: 1, player1: '', player2: '' },
+                        { id: 2, player1: '', player2: '' },
+                        { id: 3, player1: '', player2: '' },
+
+                    ]
+                }
+            },
+            methods: {
+                sit(elem, player) {
+                    console.log(elem, player);
+                    elem[player] = this.login;
+                    conn.send('dupa');
+                    
+                }
+            }
+
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

@@ -12,113 +12,140 @@
 <body>
 
     <div id="app">
-        <div style="border:1px black solid;width:900px;padding:5px">
-            <div v-if="!playerbool">
-                <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ ZANIM
-                    WYBIERZESZ GRACZA</p>
-                <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied"
-                    @click="setPlayer(elem)">Gracz {{elem.id}}</button>
-                <br><br>
+        <label>Wybierz stół:</label>
+        <select name="" id="" v-model="table" @change="load">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <button @click="load">załaduj</button>
+
+        <p>Ilość podłączonych: {{activeplayers}}</p>
+
+        <div v-if="table">
+
+            <div style="border:1px black solid;width:900px;padding:5px" v-if="!observer">
+
+                <!-- <p v-if="(gd.players[0].occupied && gd.players[1].occupied) && !yourplayer">
+                    WYBIERZ JESZCZE RAZ GRACZA (jeśli coś się zuebało) albo wybierz observera
+
+                    <button v-for="elem in gd.players" style="margin-right:10px" @click="setPlayer(elem)">Gracz
+                        {{elem.id}}</button>
+                    <br><br>
+                </p> -->
+                <div v-if="!playerbool">
+                    <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ
+                        ZANIM
+                        WYBIERZESZ GRACZA</p>
+
+                    <button v-for="elem in gd.players" style="margin-right:10px" v-if="!elem.occupied"
+                        @click="setPlayer(elem)">Gracz {{elem.id}}</button>
+
+                    <button @click="observer = true">Obserwer</button>
+                    <br><br>
+                </div>
+
+
+
+                <div v-if="bootinfo" @click="bootinfo = false" id="bootinfo">
+                    <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
+                    <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
+                </div>
+
+                <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
+
+                <p v-if="!gd.players[1].occupied">Oczekiwanie na gracza 2</p>
+
+
+                <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
+                <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
+                <div v-if="yourplayer">
+                    <p style="font-weight:bold;color:green" v-if="activeplayer == yourplayer">TWOJA TURA</p>
+                    <p v-else style="font-weight:bold;color:red">TURA PRZECIWNIKA</p>
+                </div>
+
+
             </div>
 
 
-            <div v-if="bootinfo" @click="bootinfo = false" id="bootinfo">
-                <p v-if="gd.players[0].occupied">Gracz JEDEN SIEDZI PRZY STOLE</p>
-                <p v-if="gd.players[1].occupied">Gracz DWA SIEDZI PRZY STOLE</p>
-            </div>
-
-            <p v-if="!gd.players[0].occupied">Oczekiwanie na gracza 1</p>
-
-            <p v-if="!gd.players[1].occupied">Oczekiwanie na gracza 2</p>
+            <p style="font-weight:bold">
+                <span style="margin-right:5px;color:red" v-if="activeplayer === 1">Gracz:{{activeplayer }}</span>
+                <span style="margin-right:5px;color:blue" v-if="activeplayer === 2">Gracz:{{activeplayer }}</span>
 
 
-            <p v-if="yourplayer==1">JESTEŚ GRACZEM JEDEN</p>
-            <p v-if="yourplayer==2">JESTEŚ GRACZEM DWA</p>
-            <div v-if="gd.players[0].occupied && gd.players[1].occupied">
-                <p style="font-weight:bold;color:green" v-if="activeplayer == yourplayer">TWOJA TURA</p>
-                <p v-else style="font-weight:bold;color:red">TURA PRZECIWNIKA</p>
-            </div>
+                <span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
+                    Gold:{{activeplayerobject.gold}}</span>
+            </p>
+
+            <div style="display:flex">
 
 
-        </div>
+                <div id="board">
+                    <div class="field" v-for="(elem,index) in gd.fields" @click="handleField(elem)"
+                        @mouseover="handleHover(elem)" :class="getDynamicClass2(elem)" :id="'field'+elem.x+''+elem.y"
+                        :key="index">
+                        <span v-if="elem.life" class="life">{{elem.life}}</span><span v-if="elem.life"
+                            class="attack">{{elem.attack}}</span>
 
-        <p style="font-weight:bold">
-            <span style="margin-right:5px;color:red" v-if="activeplayer === 1">Gracz:{{activeplayer }}</span>
-            <span style="margin-right:5px;color:blue" v-if="activeplayer === 2">Gracz:{{activeplayer }}</span>
-
-
-            <span v-if="activeplayerobject">Mana:{{activeplayerobject.mana}}
-                Gold:{{activeplayerobject.gold}}</span>
-        </p>
-
-        <div style="display:flex">
+                        <span v-if="elem.player == 1" class="player1sign"></span>
+                        <span v-if="elem.player == 2" class="player2sign"></span>
+                        <span v-if="elem.immunity" class="immunity"></span>
 
 
-            <div id="board">
-                <div class="field" v-for="(elem,index) in gd.fields" @click="handleField(elem)"
-                    :class="getDynamicClass2(elem)" :id="'field'+elem.x+''+elem.y" :key="index">
-                    <span v-if="elem.life" class="life">{{elem.life}}</span><span v-if="elem.life"
-                        class="attack">{{elem.attack}}</span>
+                    </div>
+                    <div style="clear:both"></div>
 
-                    <span v-if="elem.player == 1" class="player1sign"></span>
-                    <span v-if="elem.player == 2" class="player2sign"></span>
-                    <span v-if="elem.immunity" class="immunity"></span>
+                    <p v-for="elem in gd.messages">{{elem}}</p>
+
+                    <div id="kula"></div>
+                </div>
+
+                <div style="margin-left:5px">
+                    Jednostki:
+
+                    <select name="" id="" v-model="gd.buycode">
+                        <option value="skeleton">Szkielet (koszt 8)</option>
+                        <option value="mage">Mag (koszt 15)</option>
+                        <option value="rat">Szczur (koszt 2)</option>
+                        <option value="golem">Golem (koszt 10)</option>
+                        <option value="scout">Łucznik (koszt 10)</option>
+
+                    </select>
+
+                    <button @click="buy" v-if="gd.buycode && !gd.placebool">Kup</button>
+                    <button v-if="gd.placebool" @click="cancel">Anuluj</button>
+                    <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
+                    <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
+                    <button @click="reset">Resetuj</button>
 
 
                 </div>
-                <div style="clear:both"></div>
-
-
-
-
-
-
-                <p v-for="elem in gd.messages">{{elem}}</p>
-
-                <div id="kula"></div>
-            </div>
-
-            <div style="margin-left:5px">
-                Jednostki:
-
-                <select name="" id="" v-model="gd.buycode">
-                    <option value="skeleton">Szkielet (koszt 8)</option>
-                    <option value="mage">Mag (koszt 15)</option>
-                    <option value="rat">Szczur (koszt 2)</option>
-                    <option value="golem">Golem (koszt 10)</option>
-                    <option value="scout">Łucznik (koszt 10)</option>
-
-                </select>
-
-                <button @click="buy" v-if="gd.buycode && !gd.placebool">Kup</button>
-                <button v-if="gd.placebool" @click="cancel">Anuluj</button>
-                <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
-                <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
-
 
             </div>
 
+            <p>Czary:</p>
+            <div
+                v-if="gd.boltbool || gd.speederbool || gd.immunitybool || gd.stunbool || gd.rangerbool || gd.fireballbool">
+                <button @click="cancel">Anuluj</button>
+            </div>
+            <div v-else>
+                <button @click="handleBolt">Piorun (12)</button>
+                <button @click="handleSpeeder">Speeder (6)</button>
+                <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
+                <button @click="handleStun">Ogłuszenie (9)</button>
+                <button @click="handleRanger">Ranger (15)</button>
+                <button @click="handleFireball">Fireball (18)</button>
+
+            </div>
+
+
+
+            <br><br><br><br><br><br><br><br><br>
+
+            <button @click="save">Zapisz</button>
+            <button @click="load">Załaduj</button>
         </div>
-
-        <p>Czary:</p>
-        <div v-if="gd.boltbool || gd.speederbool || gd.immunitybool || gd.stunbool || gd.rangerbool">
-            <button @click="cancel">Anuluj</button>
-        </div>
-        <div v-else>
-            <button @click="handleBolt">Piorun (12)</button>
-            <button @click="handleSpeeder">Speeder (6)</button>
-            <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
-            <button @click="handleStun">Ogłuszenie (9)</button>
-            <button @click="handleRanger">Ranger (15)</button>
-        </div>
-
-
-
-        <br><br>
-
-        <!-- <button @click="save">Zapisz</button>
-        <button @click="load">Załaduj</button> -->
-
         <!-- <button @click="next">Koniec tury</button> -->
     </div>
 
@@ -139,12 +166,9 @@
             wsstring = 'ws://91.228.198.26:8082';
         }
 
-        console.log(window.location.hostname);
 
         var conn = new WebSocket(wsstring);
         conn.onopen = function (e) {
-
-            console.log("Connection established!");
             socketready = 1;
         };
 
@@ -185,10 +209,12 @@
         let app = new Vue({
             el: '#app',
             data: {
-
+                table: null,
+                observer: false,
+                activeplayers: 0,
                 bootinfo: true,
                 playerbool: false,
-                yourplayer: 0,
+                yourplayer: null,
                 gd: {
                     gameover: false,
                     player1wins: false,
@@ -202,9 +228,10 @@
                     immunitybool: false,
                     stunbool: false,
                     rangerbool: false,
+                    fireballbool: false,
                     players: [
-                        { id: 1, mana: 15, gold: 60, occupied: false },
-                        { id: 2, mana: 15, gold: 60, occupied: false },
+                        { id: 1, mana: 20, gold: 60, occupied: false },
+                        { id: 2, mana: 20, gold: 60, occupied: false },
                     ],
                     activefieldbool: false,
                     activefield: {},
@@ -257,11 +284,11 @@
                             type: 'enemy',
                             code: 'scout',
                             attack: 2,
-                            life: 4,
+                            life: 5,
                             speed: 3,
                             active: false,
-                            cost: 8,
-                            range: 5,
+                            cost: 10,
+                            range: 7,
                             immunity: false
                         }
 
@@ -274,7 +301,7 @@
                 let self = this;
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 10; j++) {
-                        this.gd.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null })
+                        this.gd.fields.push({ active: false, x: j, y: i, attacked: false, moved: false, color: '', code: '', life: null, class: '', player: null, pink: false })
                     }
                 }
 
@@ -287,19 +314,30 @@
 
                 this.next();
 
+                //                self.load();
+
                 conn.onmessage = function (e) {
-                    console.log(e);
-                    self.load();
+                    if (e.data == 'load') {
+                        self.load();
+                    } else {
+                        self.activeplayers = e.data;
+                    }
                 };
 
             },
             computed: {
                 activeplayerobject() {
+                    if (!this.table) {
+                        return;
+                    }
                     let self = this;
                     return this.gd.players.find((el) => el.id == self.activeplayer)
 
                 },
                 activeplayer() {
+                    if (!this.table) {
+                        return;
+                    }
                     if (this.gd.fields.find((el) => el.active)) {
                         return this.gd.fields.find((el) => el.active).player
                     } else {
@@ -308,30 +346,40 @@
                 }
             },
             methods: {
-                cancel(){
+                async reset() {
+                    let self = this;
+                    await axios.post('api/reset.php?table=' + this.table);
+
+                    setTimeout(() => {
+                        self.load();
+                        conn.send('load');
+                    }, 400);
+                },
+                cancel() {
                     this.gd.boltbool = false;
                     this.gd.speederbool = false;
                     this.gd.placebool = false;
                     this.gd.immunitybool = false;
                     this.gd.stunbool = false;
                     this.gd.rangerbool = false;
+                    this.gd.fireballbool = false;
+
                 },
                 async setPlayer(elem) {
                     this.yourplayer = elem.id;
                     this.playerbool = true;
                     elem.occupied = true;
-                    await axios.post('api/save.php', this.gd);
+                    await axios.post('api/save.php?table=' + this.table, this.gd);
                     setTimeout(() => {
                         conn.send('load');
                     }, 400)
                 },
                 async save() {
-                    await axios.post('api/save.php', this.gd);
+                    await axios.post('api/save.php?table=' + this.table, this.gd);
                 },
                 async load() {
-                    console.log('load');
                     let self = this;
-                    await axios.get('api/load.php').then((res) => self.gd = res.data);
+                    await axios.get('api/load.php?table=' + this.table).then((res) => self.gd = res.data);
                 },
                 buy() {
                     this.gd.placebool = true;
@@ -368,7 +416,7 @@
                         }
                     }
                     if (this.gd.turns > 0) {
-                        await axios.post('api/save.php', this.gd);
+                        await axios.post('api/save.php?table=' + this.table, this.gd);
 
                         setTimeout(() => {
                             conn.send('load');
@@ -435,9 +483,6 @@
 
                             this.clearobject(objectfieldold);
 
-
-
-
                             objectfieldnew.active = false;
                             this.next();
                             return;
@@ -455,7 +500,6 @@
                                     objectfieldnew.life -= objectfieldold.attack;
 
                                     if (objectfieldold.range > 1) {
-                                        console.log(x, y, x2, y2);
                                         animuj('kula', x * 50 + 20, y * 50 + 20, x2 * 50 + 20, y2 * 50 + 20, 5)
                                     }
                                     //kontratak
@@ -569,13 +613,17 @@
                     this.gd.rangerbool = true
 
                 },
+                handleFireball() {
+                    if (this.activeplayer != this.yourplayer) {
+                        this.gd.messages.push('TO NIE JEST TWOJA TURA!');
+                        return;
+                    }
+                    this.gd.fireballbool = true
+
+                },
                 handleField(elem) {
-                    console.log('handlefield');
                     let self = this;
                     let ap = this.gd.players.find((el) => el.id == self.activeplayer);
-
-                    console.log(this.gd.yourplayer);
-                    console.log(this.activeplayer);
 
                     if (this.activeplayer != this.yourplayer) {
                         this.gd.messages.push('TO NIE JEST TWOJA TURA!');
@@ -712,11 +760,60 @@
                         return
                     }
 
+                    //fireball
+                    if (this.gd.fireballbool) {
+                        if (ap.mana <= 18) {
+                            self.gd.messages.push('za mało many');
+                            return;
+                        }
+
+
+
+                        let fields = this.gd.fields.filter((el) => Math.abs(el.x - elem.x) <= 1 && Math.abs(el.y - elem.y) <= 1);
+
+                        for (let i = 0; i < fields.length; i++) {
+                            if (fields[i].type) {
+                                fields[i].life -= 1;
+                                if (fields[i].life <= 0) {
+                                    this.clearobject(fields[i]);
+                                }
+                            }
+
+                        }
+
+                        for (let i = 0; i < this.gd.fields.length; i++) {
+                            let el = this.gd.fields[i];
+                            el.pink = false;
+                        }
+
+                        ap.mana -= 18;
+                        this.gd.fireballbool = false;
+                        return
+                    }
+
 
                     if (this.gd.fields.find((el) => el.active)) {
                         this.move(this.gd.fields.find((el) => el.active).x, this.gd.fields.find((el) => el.active).y, elem.x, elem.y);
                     }
 
+                },
+                handleHover(elem) {
+                    if (this.gd.fireballbool) {
+                        let fields = this.gd.fields.filter((el) => Math.abs(el.x - elem.x) <= 1 && Math.abs(el.y - elem.y) <= 1);
+
+                        console.log(fields);
+                        for (let i = 0; i < this.gd.fields.length; i++) {
+                            let el = this.gd.fields[i];
+                            if (Math.abs(el.x - elem.x) <= 1 && Math.abs(el.y - elem.y) <= 1) {
+                                el.pink = true;
+                            } else {
+                                el.pink = false;
+                            }
+                        }
+
+                        //this.gd.fireballbool = false;
+                        // return
+                    }
                 },
                 getDynamicClass2(elem) {
                     let self = this;
@@ -742,12 +839,14 @@
                         // [elem.color]: elem.color,
                         'green': elem.green,
                         'red': elem.red,
-
+                        'pink': elem.pink,
                         'attacked': elem.attacked,
                         'bolticon': this.gd.boltbool,
                         'speedericon': this.gd.speederbool,
                         'immunityicon': this.gd.immunitybool,
                         'stunicon': this.gd.stunbool,
+                        'fireballicon': this.gd.fireballbool,
+
 
                         'add': this.gd.placebool && !elem.type,
                         'skeleton': elem.code == 'skeleton',

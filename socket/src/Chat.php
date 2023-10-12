@@ -20,10 +20,21 @@ class Chat implements MessageComponentInterface
         $this->clients->attach($conn);
 
         echo "New connection! ({$conn->resourceId})\n";
+
+        $numRecv = count($this->clients);
+
+        echo 'połączone jest' . $numRecv . ' klientów';
+
+        foreach ($this->clients as $client) {
+            $client->send($numRecv);
+        }
+
+
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
     {
+        echo $from->resourceId;
         $numRecv = count($this->clients) - 1;
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n", $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 
@@ -41,6 +52,16 @@ class Chat implements MessageComponentInterface
         $this->clients->detach($conn);
 
         echo "Connection {$conn->resourceId} has disconnected\n";
+
+
+        $numRecv = count($this->clients);
+
+        echo 'połączone jest' . $numRecv . ' klientów';
+
+        foreach ($this->clients as $client) {
+            $client->send($numRecv);
+        }
+
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)
