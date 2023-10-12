@@ -13,7 +13,7 @@
 
     <div id="app">
         <label>Wybierz stół:</label>
-        <select name="" id="" v-model="table" @change="load">
+        <select name="" id="" v-model="table" >
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -135,7 +135,7 @@
                 <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
                 <button @click="handleStun">Ogłuszenie (9)</button>
                 <button @click="handleRanger">Ranger (15)</button>
-                <button @click="handleFireball">Fireball (18)</button>
+                <button @click="handleFireball">Fireball (16)</button>
 
             </div>
 
@@ -161,10 +161,10 @@
 
         let socketready = 0;
 
-        let wsstring = 'ws://localhost:8082';
+        let wsstring = 'ws://localhost:8084';
 
         if (window.location.hostname == 'heroes.kordi.com.pl') {
-            wsstring = 'ws://91.228.198.26:8082';
+            wsstring = 'ws://91.228.198.26:8084';
         }
 
 
@@ -763,7 +763,7 @@
 
                     //fireball
                     if (this.gd.fireballbool) {
-                        if (ap.mana <= 18) {
+                        if (ap.mana < 16) {
                             self.gd.messages.push('za mało many');
                             return;
                         }
@@ -787,7 +787,7 @@
                             el.pink = false;
                         }
 
-                        ap.mana -= 18;
+                        ap.mana -= 16;
                         this.gd.fireballbool = false;
                         return
                     }
