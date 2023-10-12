@@ -27,13 +27,13 @@
 
             <div style="border:1px black solid;width:900px;padding:5px" v-if="!observer">
 
-                <!-- <p v-if="(gd.players[0].occupied && gd.players[1].occupied) && !yourplayer">
+                <p v-if="(gd.players[0].occupied && gd.players[1].occupied) && !yourplayer">
                     WYBIERZ JESZCZE RAZ GRACZA (jeśli coś się zuebało) albo wybierz observera
 
                     <button v-for="elem in gd.players" style="margin-right:10px" @click="setPlayer(elem)">Gracz
                         {{elem.id}}</button>
                     <br><br>
-                </p> -->
+                </p>
                 <div v-if="!playerbool">
                     <p v-if="!gd.players[0].occupied">UWAGA UPEWNIJ SIĘ ŻE DRUGI GRACZ JUŻ MA ODPALONE PRZEGLĄDARKĘ
                         ZANIM
