@@ -101,26 +101,28 @@
                     <div id="kula"></div>
                 </div>
 
-                <div style="margin-left:5px">
-                    Jednostki:
-
-                    <select name="" id="" v-model="gd.buycode">
-                        <option value="skeleton">Szkielet (koszt 8)</option>
-                        <option value="mage">Mag (koszt 15)</option>
-                        <option value="rat">Szczur (koszt 2)</option>
-                        <option value="golem">Golem (koszt 10)</option>
-                        <option value="scout">Łucznik (koszt 10)</option>
-
-                    </select>
-
-                    <button @click="buy" v-if="gd.buycode && !gd.placebool">Kup</button>
-                    <button v-if="gd.placebool" @click="cancel">Anuluj</button>
-                    <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
-                    <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
 
 
+            </div>
+<br>
+            <div>
+                Jednostki:
 
-                </div>
+                <select name="" id="" v-model="gd.buycode">
+                    <option value="skeleton">Szkielet (koszt 8)</option>
+                    <option value="mage">Mag (koszt 15)</option>
+                    <option value="rat">Szczur (koszt 2)</option>
+                    <option value="golem">Golem (koszt 10)</option>
+                    <option value="scout">Łucznik (koszt 10)</option>
+
+                </select>
+
+                <button @click="buy" v-if="gd.buycode && !gd.placebool">Kup</button>
+                <button v-if="gd.placebool" @click="cancel">Anuluj</button>
+                <p style="color:red;font-weight:bold" v-if="gd.player1wins">GRACZ 1 WYGRYWA</p>
+                <p style="color:blue;font-weight:bold" v-if="gd.player2wins">GRACZ 2 WYGRYWA</p>
+
+
 
             </div>
 
@@ -129,7 +131,7 @@
                 v-if="gd.boltbool || gd.speederbool || gd.immunitybool || gd.stunbool || gd.rangerbool || gd.fireballbool">
                 <button @click="cancel">Anuluj</button>
             </div>
-            <div v-else>
+            <div v-else style="width:500px"> 
                 <button @click="handleBolt">Piorun (12)</button>
                 <button @click="handleSpeeder">Speeder (6)</button>
                 <button @click="handleImmunity">Odporność magiczna 50% (5)</button>
